@@ -1,0 +1,1 @@
+{"package":"demote","name":"Demote","kind":"middleware","summary":{"en":"Move failed provider credentials to the back on configurable HTTP error codes."}}

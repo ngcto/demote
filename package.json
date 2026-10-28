@@ -1,0 +1,18 @@
+{
+  "name": "demote",
+  "version": "0.1.0",
+  "description": "Demote: move failing Magpie provider credentials to the end of their saved order",
+  "type": "module",
+  "license": "MIT",
+  "repository": {"type": "git", "url": "git+https://github.com/ngcto/demote.git"},
+  "homepage": "https://github.com/ngcto/demote#readme",
+  "files": ["demote.hooks.mjs", "src/", "page/", "README.md", "LICENSE", "registry-entry.json"],
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "keywords": ["magpie", "magpie-plugin", "credential-failover"],
+  "magpie": {
+    "hooks": "./demote.hooks.mjs",
+    "page": {"title": "Demote", "file": "page/index.html"},
+    "gatewayTimeoutMs": 10000,
+    "options": {"providers": "*", "errorCodes": [401, 402, 403, 429], "enforceOrder": true}
+  }
+}
