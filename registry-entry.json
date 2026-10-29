@@ -1,1 +1,1 @@
-{"package":"demote","name":"Demote","kind":"middleware","summary":{"en":"Move failed provider credentials to the back on configurable HTTP error codes."}}
+{"package":"demote","name":"Demote","kind":"middleware","summary":{"en":"Move failing credentials below available accounts: soft demotion above hard demotion, with configurable HTTP codes."}}

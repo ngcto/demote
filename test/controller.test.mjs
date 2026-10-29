@@ -8,7 +8,7 @@ function harness(account=false) {
  const c=new Controller(api);
  return {c,api,calls,get provider(){return provider},set trace(t){trace=t},fail(status=401){trace={object:'trace',pid:1,routes:[{id:1,order:[{id:account?'p':'p#a',provider:'p',who:account?'a@x.test':'masked'}],tries:[{id:account?'p':'p#a',start:'now',done:true,status},{id:account?'p@B@x.test':'p#b',start:'later',done:true,status:200}]}]};}};
 }
-test('defaults and validation',()=>{assert.deepEqual(parseOptions().errorCodes,[401,402,403,429]);for(const o of [{providers:'p'},{errorCodes:['401']},{errorCodes:[200]},{enforceOrder:1}])assert.throws(()=>parseOptions(o));});
+test('defaults and validation',()=>{assert.deepEqual(parseOptions().soft,[429]);assert.deepEqual(parseOptions().hard,[401,402,403]);for(const o of [{providers:'p'},{errorCodes:['401']},{errorCodes:[200]},{enforceOrder:1}])assert.throws(()=>parseOptions(o));});
 test('detects failed attempt even if final fallback succeeded and preserves disabled state',async()=>{const h=harness();await h.c.run();h.fail();assert.equal(await h.c.run(),1);assert.deepEqual(h.calls,[['route','order'],['arrange',['b','off','a']]]);assert.equal(h.provider.keyList[1].on,false);});
 test('subscription identity joins active seat by who, preserves exact stored user',async()=>{const h=harness(true);await h.c.run();h.fail(402);await h.c.run();assert.deepEqual(h.calls[1],['arrange',['B@x.test','disabled','A@x.test']]);});
 test('deduplicates trace snapshots',async()=>{const h=harness();await h.c.run();h.fail();await h.c.run();await h.c.run();assert.equal(h.calls.length,2);});

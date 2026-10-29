@@ -19,4 +19,4 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: '1.4.4'
-      - run: bun test test/controller.test.mjs test/page.test.mjs
+      - run: bun test test/*.test.mjs

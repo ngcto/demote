@@ -1,6 +1,6 @@
 {
   "name": "demote",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Demote: move failing Magpie provider credentials to the end of their saved order",
   "type": "module",
   "license": "MIT",
@@ -13,6 +13,6 @@
     "hooks": "./demote.hooks.mjs",
     "page": {"title": "Demote", "file": "page/index.html"},
     "gatewayTimeoutMs": 10000,
-    "options": {"providers": "*", "errorCodes": [401, 402, 403, 429], "enforceOrder": true}
+    "options": {"providers": "*", "softErrorCodes": [429], "hardErrorCodes": [401, 402, 403], "enforceOrder": true}
   }
 }

@@ -1,24 +1,23 @@
-# Verification — Demote 0.1.0
+# Verification — Demote 0.2.0
 
-## Final implementation
+## Implementation
 
-Bun asynchronous gateway request/completion hooks, loopback per-attempt trace, authenticated Browser access management API. Earlier onUsage/routing-strategy prototype was discarded: ordinary failed attempts during successful failover do not enter the ledger. No gateway strategy is shipped.
+Bun request/completion hooks read the loopback per-attempt trace and use authenticated web management APIs. Credential tiers are available (0), soft (1), hard (2); default HTTP codes are soft `[429]`, hard `[401,402,403]`. Hard dominates overlapping codes and cannot be weakened by a subsequent soft failure. Persisted tier intent is written atomically before remote changes; exact credential order and enabled flags are read back.
 
 ## Executed checks
 
-- `npm test`: 14 passed, 0 failed.
-- `bun test test/controller.test.mjs test/page.test.mjs`: 14 passed, 0 failed (Bun 1.4.4).
-- `node --check demote.hooks.mjs`, `node --check page/app.js`: passed.
-- Real released Magpie CLI 0.1.1910, Linux arm64, downloaded from release assets and SHA-256 checked against `/api/latest`: `014894268d62dddd131da888927ed657d1fd7421fdb92d079b1c6d3924f316ef`.
-- Real plugin host loaded the final hooks/page package without load errors.
-- Isolated HOME with fake credentials + loopback HTTP upstream + authenticated web API: first request tried `fixture-dead` (401), then `fixture-good` (200); second request tried only `fixture-good`.
-- Exact persisted provider readback after requests: primary `fixture-good`, final saved key `fixture-dead`, routing `order`.
-- Settings page JavaScript exercised under a DOM/bridge fixture: default loading, scope/code save, invalid-code validation passed. Actual GUI visual rendering was not tested.
-- Subscription account identity and arrangement tested using contract fixtures, not live vendor accounts. No production sign-ins or generation requests used.
-- `npm pack --dry-run`: only expected runtime files, page, README, license and registry entry; no keys, logs, vendor bundles or dependencies.
+- `npm test`: 27 passed, 0 failed.
+- `bun test test/*.test.mjs`: 27 passed, 0 failed (Bun 1.4.4).
+- Controller regressions cover both soft/hard observation orders, multiple failures, repeated failures, upgrades/no-downgrade, persisted restart, custom code overlap, legacy migration, disk failure, corrupt state, removed/single credentials, scope, disabled credentials, readback and cancellation/concurrency.
+- State store exercised with actual files: round-trip after fresh store construction, mode 0600, atomic replacement without temporary residue, corrupt JSON error.
+- Settings page JavaScript exercised with DOM/bridge fixtures: separate defaults, save validation, legacy migration. Visual GUI rendering not tested.
+- Real released Magpie CLI 0.1.1910, Linux arm64: isolated HOME, fake credentials, loopback mock upstream, authenticated `serve --web`.
+- First request: fixture-dead returns 401, fixture-soft succeeds. Saved order becomes `[fixture-soft, fixture-good, fixture-dead]`; hard tier persisted.
+- Restarted the actual gateway and plugin host. fixture-soft then returns 429, fixture-good succeeds. Exact saved order readback: `[fixture-good, fixture-soft, fixture-dead]`, tiers `[1,2]`, routing `order`, state file mode 0600.
+- Actual plugin host loads final hooks/page without errors. No production credentials or vendor requests used; live subscription switching is untested.
 
-## Limits
+## Remaining constraints
 
-Browser access is a prerequisite. The plugin only reconciles on request/completion callbacks; trace eviction and dropped completion callbacks can miss failures. Uses internal source-backed APIs rather than a stable SDK. Physical arrangement can switch subscription primary sign-ins, and default enforceOrder changes the affected provider routing. Existing affinity/pins/groups can supersede order. Saved changes remain when the plugin is disabled. These are documented in README and the settings page.
+Requires authenticated local web management. Trace/callback delivery is best effort and bounded; no reliable per-attempt public SDK. Saved order may be overridden by affinity/pins/groups or by retaining non-order routing. Subscription arrangement can switch primary sign-ins. Tiers never auto-recover; manual reset documented. Old 0.1 demotions cannot be retroactively classified. Local state is intended for one gateway/plugin host; multiple concurrent processes sharing the config file have no interprocess CAS/lock. Host account arrangement also has no CAS against external edits.
 
-Not published to npm or a public marketplace. Source folder installation is the delivered path.
+Not published to npm or a public marketplace. GitHub source installation is supported.

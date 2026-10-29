@@ -1,11 +1,12 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>Demote</title><script src="_magpie/bridge.js"></script><script src="app.js" defer></script><style>body{padding:20px;max-width:700px}label{display:block;margin:18px 0}input{width:100%;box-sizing:border-box}input[type=checkbox]{width:auto}small{display:block;margin-top:5px}#status{white-space:pre-wrap}</style></head><body>
-<h1>Demote</h1><p>Move credentials that fail with selected HTTP codes to the back of their provider’s saved order.</p>
-<p><strong>Setup:</strong> enable authenticated Browser access in Settings → Network and sharing. Demote only connects over loopback. It never enables Browser access for you.</p>
+<h1>Demote</h1><p>Credential order: <strong>available → soft-demoted → hard-demoted</strong>.</p>
+<p><strong>Setup:</strong> use Magpie’s authenticated web management API. In the native desktop app, enable Browser access in Settings → Network and sharing. That setting is hidden in the web UI because browser access is already running. For magpie web / serve --web, supply MAGPIE_WEB_KEY in the host environment. Demote only connects over loopback and never enables Browser access itself.</p>
 <label>Providers <input id="providers" placeholder="*"><small>* applies to every provider, including providers added later. Otherwise, enter comma-separated exact provider IDs.</small></label>
-<label>HTTP error codes <input id="codes" placeholder="401, 402, 403, 429"><small>Defaults: refused authentication, payment/quota, forbidden access, rate limit. Ordinary 400/404 and transient 5xx errors are excluded.</small></label>
-<label><input type="checkbox" id="order"> Use listed-order routing after a demotion<small>Recommended for “lowest” priority. Changes that provider’s routing to order. Off preserves routing, which may override the saved order.</small></label>
-<label>Browser access port <input type="number" id="port" min="1" max="65535" placeholder="Automatic (normally 3430)"></label>
+<label>Soft demotion HTTP codes <input id="softCodes" placeholder="429"><small>Below available credentials, above hard-demoted credentials. Default: rate limit.</small></label>
+<label>Hard demotion HTTP codes <input id="hardCodes" placeholder="401, 402, 403"><small>Lowest priority. Defaults: refused authentication, billing/quota, forbidden access. Hard wins if a code occurs in both lists; soft never downgrades a hard demotion.</small></label>
+<label><input type="checkbox" id="order"> Use listed-order routing after a demotion<small>Recommended to enforce the tiers. Changes that provider’s routing to order. Off preserves routing, which may override the saved order.</small></label>
+<label>Web management port <input type="number" id="port" min="1" max="65535" placeholder="Automatic (normally 3430)"></label>
 <button id="save">Save</button><p id="status" role="status"></p>
-<p>Demotions persist. No accounts are deleted or disabled. Reordering subscription accounts can switch the agent’s primary sign-in; Magpie’s Keep login setting prevents that. Turning Demote off stops new changes but does not undo saved orders or routing.</p>
+<p>Orders and tier classifications persist across restarts. No automatic recovery or expiry. No accounts are deleted or disabled. Subscription rearrangement can switch the agent’s primary sign-in; Keep login prevents that. Turning Demote off does not undo saved changes.</p>
 </body></html>

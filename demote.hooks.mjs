@@ -2,6 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {homedir} from 'node:os';
 import {Controller, parseOptions} from './src/controller.mjs';
+import {stateStore} from './src/state.mjs';
 
 function loopback(value, fallback) {
   const u=new URL(value || fallback);
@@ -34,6 +35,7 @@ async function setup(options) {
     try {return JSON.parse(text);} catch {throw new Error('Demote: invalid local API JSON');}
   }
   return new Controller({
+    ...stateStore(join(dir,'demote-state.json')),
     trace:signal=>json(gateway,'/v1/magpie/trace',signal),
     providers:async signal=>{
       const v=await json(web,'/api/providers',signal,undefined,true);
