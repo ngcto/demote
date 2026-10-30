@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm test
-      - run: node --check demote.hooks.mjs && node --check page/app.js
+      - run: node --check demote.hooks.mjs
   bun:
     runs-on: ubuntu-latest
     steps:

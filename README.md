@@ -20,7 +20,7 @@ In the **native desktop app**, enable **Settings → Network and sharing → Bro
 
 For terminal/server use, run `magpie serve --web` with `MAGPIE_WEB_KEY` supplied securely in the process environment. Demote inherits that key. Alternatively use `DEMOTE_WEB_KEY`. Never put the management key in plugin options. Set `webPort` if the web port is not 3430; `gatewayUrl` can specify a nondefault gateway origin. Only plain HTTP loopback origins are accepted; credential-bearing redirects are refused.
 
-Open the **Demote** page to edit provider scope, error codes and ordering behavior, or:
+Configure provider scope, error codes and ordering through Magpie’s plugin JSON options or the CLI (no custom config page):
 
 ```sh
 magpie plugin options demote '{"providers":"*","softErrorCodes":[429],"hardErrorCodes":[401,402,403],"enforceOrder":true}'
@@ -54,7 +54,7 @@ Orders and tier classifications survive restarts. They do not expire or auto-pro
 
 ## Upgrading from 0.1
 
-Legacy `errorCodes` subsets remain supported when neither new tier array is set: 429 maps to soft, every other legacy code maps to hard. Saving in the settings page replaces the legacy field with the two new fields. Earlier physical demotions cannot be classified retroactively because 0.1 did not store error identities; tiers start with newly observed failures.
+Legacy `errorCodes` subsets remain supported when neither new tier array is set: 429 maps to soft, every other legacy code maps to hard. To migrate explicitly, replace the legacy field with `softErrorCodes` and `hardErrorCodes` in the plugin options. Earlier physical demotions cannot be classified retroactively because 0.1 did not store error identities; tiers start with newly observed failures.
 
 ## Limits
 

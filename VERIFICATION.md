@@ -1,4 +1,4 @@
-# Verification — Demote 0.2.0
+# Verification — Demote 0.2.1
 
 ## Implementation
 
@@ -6,15 +6,15 @@ Bun request/completion hooks read the loopback per-attempt trace and use authent
 
 ## Executed checks
 
-- `npm test`: 27 passed, 0 failed.
-- `bun test test/*.test.mjs`: 27 passed, 0 failed (Bun 1.4.4).
+- `npm test`: 25 passed, 0 failed.
+- `bun test test/*.test.mjs`: 25 passed, 0 failed (Bun 1.4.4).
 - Controller regressions cover both soft/hard observation orders, multiple failures, repeated failures, upgrades/no-downgrade, persisted restart, custom code overlap, legacy migration, disk failure, corrupt state, removed/single credentials, scope, disabled credentials, readback and cancellation/concurrency.
 - State store exercised with actual files: round-trip after fresh store construction, mode 0600, atomic replacement without temporary residue, corrupt JSON error.
-- Settings page JavaScript exercised with DOM/bridge fixtures: separate defaults, save validation, legacy migration. Visual GUI rendering not tested.
+- Custom visual configuration page and its tests removed; JSON options and CLI configuration retained.
 - Real released Magpie CLI 0.1.1910, Linux arm64: isolated HOME, fake credentials, loopback mock upstream, authenticated `serve --web`.
 - First request: fixture-dead returns 401, fixture-soft succeeds. Saved order becomes `[fixture-soft, fixture-good, fixture-dead]`; hard tier persisted.
 - Restarted the actual gateway and plugin host. fixture-soft then returns 429, fixture-good succeeds. Exact saved order readback: `[fixture-good, fixture-soft, fixture-dead]`, tiers `[1,2]`, routing `order`, state file mode 0600.
-- Actual plugin host loads final hooks/page without errors. No production credentials or vendor requests used; live subscription switching is untested.
+- Actual plugin host loads final hooks without errors. No production credentials or vendor requests used; live subscription switching is untested.
 
 ## Remaining constraints
 
